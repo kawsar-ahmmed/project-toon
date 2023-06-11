@@ -25,9 +25,16 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try{
-    await client.connect();
-    const usersCollection = client.db('FoodDb').collection('users');
-    
+      await client.connect();
+      const usersCollection = client.db('FoodDb').collection('users');
+      //Get User
+      app.get('/user', async(req, res)=> {
+        const query = {};
+        const cursor = usersCollection.find(query);
+        const users = await cursor.toArray();
+        res.send(users);
+      })
+      // POST User 
     app.post('/user', async(req, res) => {
         const newUser = req.body;
         console.log('Adding new user', newUser);
