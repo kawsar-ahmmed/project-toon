@@ -12,7 +12,7 @@ app.use(express.json())
 //
 
 
-const uri = "mongodb+srv://ridoy91221:8f9dRYI0rhGc2KCq@cluster-new.jt669nt.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://ridoy91221:8f9dRYI0rhGc2KCq@cluster-new.jt669nt.mongodb.net/FoodDb?retryWrites=true&w=majority";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -43,12 +43,20 @@ async function run() {
             res.send(result)
         })
         // Delete user 
-        app.delete ('/user/:id', async (req, res) => {
+        app.delete('/user/:id', async (req, res) => {
             const id = req.params.id;
-            const  query = {_id: ObjectId(id)};
-            const result = await usersCollection.deleteOne(query)
+            const query = { _id: new ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
             res.send(result);
         })
+        // Update User 
+        app.get('/user/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await usersCollection.findOne(query);
+            res.send(result);
+        })
+
     }
     finally {
         // await client.close();
