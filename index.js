@@ -27,9 +27,13 @@ async function run() {
   try{
     await client.connect();
     const usersCollection = client.db('FoodDb').collection('users');
-    const user = {name: "mahi", email: "mahi@gmail.com"}
-    const result = await usersCollection.insertOne(user);
-    console.log('User Added ID:',result.insertedId)
+    
+    app.post('/user', async(req, res) => {
+        const newUser = req.body;
+        console.log('Adding new user', newUser);
+        const result = await usersCollection.insertOne(newUser);
+        res.send(result)
+    })
   }
   finally {
     // await client.close();
@@ -37,22 +41,6 @@ async function run() {
 }
 run().catch(console.dir);
 
-// // 
-// // users
-// const users = [
-//     { id: 1, name: 'sabana', email: 'sabana@gmail.com', phone: '01299999922' },
-//     { id: 2, name: 'sabnooks', email: 'sabnooks@gmail.com', phone: '01299999922' },
-//     { id: 3, name: 'srabonti', email: 'srabonti@gmail.com', phone: '01299999922' },
-//     { id: 4, name: 'suchuna', email: 'suchuna@gmail.com', phone: '01299999922' },
-//     { id: 5, name: 'kobori', email: 'kobori@gmail.com', phone: '01299999922' },
-//     { id: 6, name: 'sabila', email: 'sabila@gmail.com', phone: '01299999922' },
-//     { id: 7, name: 'shakira', email: 'shakira@gmail.com', phone: '01299999922' },
-//     { id: 8, name: 'Anta', email: 'anta@gmail.com', phone: '08976677' },
-// ];
-
-app.get('/users', (req, res) => {
-    res.send(users)
-})
 
 // app.post('/users', (req, res) => {
 //     const user = req.body;
@@ -63,5 +51,5 @@ app.get('/users', (req, res) => {
 // })
 
 app.listen(port, () => {
-    console.log('CRUD Work', port)
+    // console.log('CRUD Work', port)
 })
