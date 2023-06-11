@@ -2,7 +2,7 @@ const express = require('express')
 const app = process.env.PORT || express();
 const port = 5001;
 // Database MongoDb
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // Midleware
 var cors = require('cors')
 app.use(cors())
@@ -16,35 +16,43 @@ const uri = "mongodb+srv://ridoy91221:8f9dRYI0rhGc2KCq@cluster-new.jt669nt.mongo
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
 async function run() {
-  try{
-      await client.connect();
-      const usersCollection = client.db('FoodDb').collection('users');
-      //Get User
-      app.get('/user', async(req, res)=> {
-        const query = {};
-        const cursor = usersCollection.find(query);
-        const users = await cursor.toArray();
-        res.send(users);
-      })
-      // POST User 
-    app.post('/user', async(req, res) => {
-        const newUser = req.body;
-        console.log('Adding new user', newUser);
-        const result = await usersCollection.insertOne(newUser);
-        res.send(result)
-    })
-  }
-  finally {
-    // await client.close();
-  }
+    try {
+        await client.connect();
+        const usersCollection = client.db('FoodDb').collection('users');
+
+        //Get User
+        app.get('/user', async (req, res) => {
+            const query = {};
+            const cursor = usersCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+        })
+        // POST User 
+        app.post('/user', async (req, res) => {
+            const newUser = req.body;
+            console.log('Adding new user', newUser);
+            const result = await usersCollection.insertOne(newUser);
+            res.send(result)
+        })
+        // Delete user 
+        app.delete ('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const  query = {_id: ObjectId(id)};
+            const result = await usersCollection.deleteOne(query)
+            res.send(result);
+        })
+    }
+    finally {
+        // await client.close();
+    }
 }
 run().catch(console.dir);
 
